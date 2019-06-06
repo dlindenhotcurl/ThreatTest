@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -26,6 +27,9 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
@@ -42,11 +46,19 @@ namespace threat_test
         string PathName;
         Boolean bClosing = false;
         int ThreatUID = 0;
+        int imageCnt = 0;
+        int threatCnt = 0;
         string receiveString;
+        Boolean bPlay = false;
+        Boolean bPausePlaying = false;
+        Boolean bListening = false;
+        Boolean bParseErr = false;
+        IEnumerable<String> FileNames;
 
         public Form1()
         {
             InitializeComponent();
+            pbRunning.Visible = false;
             btnClose.Enabled = false;
             ModReg.ShowError = true;
             GetSettings();
@@ -58,6 +70,7 @@ namespace threat_test
             Text += " Debug";
 #endif
             rbRaw.Checked = true;
+            btnStop.Enabled = false;
             Listen();
         }
 
@@ -141,9 +154,12 @@ namespace threat_test
                 chkMulticast.Checked = false;
             PathName = ModReg.Read("PathName","");
 
-            txtFileName.Text = PathName;
+            txrPathName.Text = PathName;
             if (File.Exists(PathName))
+            {
                 rtxtThreatCmd.Text = CreateThreat();
+                PopulateTxt();
+            }
         }
 
         private String CreateThreat()
@@ -191,6 +207,7 @@ namespace threat_test
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
+            receiveString = "";
             rtxtThreatCmd.Clear();
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (File.Exists(PathName))
@@ -203,8 +220,9 @@ namespace threat_test
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     PathName = openFileDialog.FileName;
-                    txtFileName.Text = PathName;
+                    txrPathName.Text = PathName;
                     rtxtThreatCmd.Text = CreateThreat();
+                    PopulateTxt();
                 }
             }
             catch (Exception ex)
@@ -212,26 +230,6 @@ namespace threat_test
                 MessageBox.Show(ex.Message, "EXCEPTION");
             }
 
-        }
-
-        private void btnSaveAs_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*";
-            saveFileDialog.RestoreDirectory = true;
-            try
-            {
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    PathName = saveFileDialog.FileName;
-                    txtFileName.Text = Path.GetFileName(PathName);
-                    File.WriteAllText(PathName, rtxtThreatCmd.Text);           
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "EXCEPTION");
-            }
         }
 
         private Boolean IsMulticastAddress(IPAddress ip)
@@ -360,6 +358,7 @@ namespace threat_test
             SaveSettings();
             if (CreateReceiver(ip, port))
             {
+                bListening = true;
                 btnListen.Enabled = false;
                 btnClose.Enabled = true;
             }
@@ -377,6 +376,7 @@ namespace threat_test
             btnClose.Enabled = false;
             bClosing = false;
             EnableListenSettings(true);
+            bListening = false;
         }
 
         private bool CreateReceiver(IPAddress ip, int port)
@@ -413,6 +413,8 @@ namespace threat_test
         {
             if (!bClosing)
             {
+                //Need to pause playint until all four displays are cycled
+                bPausePlaying = true;
                 UdpClient u = (UdpClient)((UdpState)(ar.AsyncState)).u;
                 IPEndPoint e = (IPEndPoint)((UdpState)(ar.AsyncState)).e;
 
@@ -421,6 +423,7 @@ namespace threat_test
 
                 this.Invoke(new MethodInvoker(delegate()
                 {
+                    txtThreatCnt.Text = (++threatCnt).ToString();
                     rtxtThreatReply.Clear();
                     if (receiveString.Length > 0)
                     {
@@ -430,11 +433,30 @@ namespace threat_test
                         {
                             Threat threat = ThreatParse(receiveString);
                             if (threat.errmess.Length > 0)
+                            {
                                 rtxtThreatReply.Text = "ERROR parsing XML: " + threat.errmess;
+                                bParseErr = true;
+                            }
+
                             else
                                 DisplayThreat(threat);
                         }
                     }
+
+                    if (!bParseErr && bPlay)
+                    {
+                        //walk through the four display
+                        rbRaw.Checked = true;
+                        sleep(500);
+                        rbParsed.Checked = true;
+                        sleep(500);
+                        rbGJRaw.Checked = true;
+                        sleep(500);
+                        rbGJParsed.Checked = true;
+                        sleep(500);
+                        rtxtThreatReply.Clear();
+                    }
+                    bPausePlaying = false;
                 }));
 
                 udpClientRcv.BeginReceive(new AsyncCallback(ReceiveCallback), udpState);
@@ -516,6 +538,9 @@ namespace threat_test
             if (receiveString == null)
                 return;
             Threat threat = ThreatParse(receiveString);
+            if (threat == null)
+                return;
+      
             if (threat.errmess.Length > 0)
                 rtxtThreatReply.Text = "ERROR parsing XML: " + threat.errmess;
             else
@@ -530,6 +555,9 @@ namespace threat_test
             if (receiveString == null)
                 return;
             Threat threat = ThreatParse(receiveString);
+            if (threat == null)
+                return;
+
             if (threat.errmess.Length > 0)
             {
                 rtxtThreatReply.Text = "ERROR parsing XML: " + threat.errmess;
@@ -565,6 +593,9 @@ namespace threat_test
             if (receiveString == null)
                 return;
             Threat threat = ThreatParse(receiveString);
+            if (threat == null)
+                return;
+
             if (threat.errmess.Length > 0)
             {
                 rtxtThreatReply.Text = "ERROR parsing XML: " + threat.errmess;
@@ -661,6 +692,129 @@ namespace threat_test
             String val = json.Substring(pos_val_start, pos_val_end - pos_val_start + 1);
             val = val.Replace("\"", "");
             return val;
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            EnableButtons(false);
+            Next();
+        }
+
+        private void Next()
+        {
+            receiveString = "";
+            //Get a list of the filenames in the current directory
+            String srcDir = Path.GetDirectoryName(PathName);
+            FileNames = Directory.EnumerateFiles(srcDir, "*.tif");
+
+            //Find the current file (files are in alphabetical order)
+            Boolean bPathNameFound = false;
+
+            foreach (String pname in FileNames)
+            {
+                if (bParseErr)
+                {
+                    MessageBox.Show("Error parsing threat response - playing terminated");
+                    EnableButtons(true);
+                    pbRunning.Visible = false;
+                    return;
+                }
+
+                if (!bPathNameFound)
+                {
+                    //Skip past the current file
+                    if (pname == PathName)
+                        bPathNameFound = true;
+                }
+                else
+                {
+                    PathName = pname;
+                    PopulateTxt();
+                    rtxtThreatCmd.Text = CreateThreat();
+                    rtxtThreatReply.Clear();
+                    txtImgCnt.Text = (++imageCnt).ToString();
+                    Send_Click();
+
+                    //We need to pause in case a threat detection is returned.
+                    sleep(2000);
+
+                    //If a threat was returned we need to sleep while it is displayed and parsed
+                    while (bPausePlaying)
+                        sleep(100);
+
+                    if (!bPlay)
+                    {
+                        EnableButtons(true);
+                        break;
+                    }
+                }                 
+            }
+
+            //we are now at the end of the current directory
+            if (bPlay)
+            {
+                MessageBox.Show("End of directory reached");
+                btnStop_Click(null, EventArgs.Empty);
+            }
+        }
+
+        void sleep(int msecs)
+        {
+            for (int i = 0; i < msecs; i += 100)
+            {
+                Application.DoEvents();
+                Thread.Sleep(100);
+            }
+        }
+
+        private void PopulateTxt()
+        {
+            txtFileName.Text = Path.GetFileName(PathName);
+            String fullDir = Path.GetDirectoryName(PathName);
+            int lastSlash = fullDir.LastIndexOf("\\");
+            txtDirectory.Text = fullDir.Substring(lastSlash + 1);
+            int firstSlash = fullDir.LastIndexOf("\\", lastSlash - 1);
+            txtSpectrum.Text = fullDir.Substring(firstSlash + 1, lastSlash - firstSlash - 1);
+        }
+
+        private void btnPlay_Click(object sender, EventArgs e)
+        {
+            EnableButtons(false);
+            bPlay = true;
+            btnStop.Enabled = true;
+            pbRunning.Visible = true;
+            Next();
+        } 
+
+        private void EnableButtons(Boolean bEnabled)
+        {
+
+            btnClose.Enabled = bEnabled && bListening;
+            btnExit.Enabled = bEnabled;
+            btnListen.Enabled = bEnabled && !bListening;
+            btnNext.Enabled = bEnabled;
+            btnOpen.Enabled = bEnabled;
+            btnPlay.Enabled = bEnabled;
+            btnSend.Enabled = bEnabled;
+            rbRaw.Enabled = bEnabled;
+            rbParsed.Enabled = bEnabled;
+            rbGJRaw.Enabled = bEnabled;
+            rbGJParsed.Enabled = bEnabled;
+            txtAdapter.Enabled = bEnabled;
+            txtAddress.Enabled = bEnabled;
+            txtPortSend.Enabled = bEnabled;
+            txtTTL.Enabled = bEnabled;
+
+            EnableListenSettings(bEnabled);
+
+        }
+
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            btnStop.Enabled = false;
+            bPlay = false;
+            pbRunning.Visible = false;
+            EnableButtons(true);
         }
     }
 }

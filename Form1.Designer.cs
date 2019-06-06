@@ -39,8 +39,14 @@
             this.rtxtThreatCmd = new System.Windows.Forms.RichTextBox();
             this.btnOpen = new System.Windows.Forms.Button();
             this.grpBoxXML = new System.Windows.Forms.GroupBox();
-            this.txtFileName = new System.Windows.Forms.TextBox();
+            this.txrPathName = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.grpSpectrum = new System.Windows.Forms.GroupBox();
+            this.txtSpectrum = new System.Windows.Forms.TextBox();
+            this.grpFileName = new System.Windows.Forms.GroupBox();
+            this.txtFileName = new System.Windows.Forms.TextBox();
+            this.grpDirectory = new System.Windows.Forms.GroupBox();
+            this.txtDirectory = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.rbGJParsed = new System.Windows.Forms.RadioButton();
             this.rbGJRaw = new System.Windows.Forms.RadioButton();
@@ -58,15 +64,31 @@
             this.txtTTL = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.txtAdapter = new System.Windows.Forms.TextBox();
+            this.grpPlay = new System.Windows.Forms.GroupBox();
+            this.grpThreatCount = new System.Windows.Forms.GroupBox();
+            this.txtThreatCnt = new System.Windows.Forms.TextBox();
+            this.grpImageCount = new System.Windows.Forms.GroupBox();
+            this.txtImgCnt = new System.Windows.Forms.TextBox();
+            this.btnStop = new System.Windows.Forms.Button();
+            this.btnPlay = new System.Windows.Forms.Button();
+            this.btnNext = new System.Windows.Forms.Button();
+            this.pbRunning = new System.Windows.Forms.PictureBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.grpBoxXML.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.grpSpectrum.SuspendLayout();
+            this.grpFileName.SuspendLayout();
+            this.grpDirectory.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.grpMulticast.SuspendLayout();
             this.grpBoxTTL.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.grpPlay.SuspendLayout();
+            this.grpThreatCount.SuspendLayout();
+            this.grpImageCount.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRunning)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox2
@@ -85,12 +107,13 @@
             this.txtPortSend.Name = "txtPortSend";
             this.txtPortSend.Size = new System.Drawing.Size(56, 20);
             this.txtPortSend.TabIndex = 0;
+            this.txtPortSend.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // btnSend
             // 
             this.btnSend.Location = new System.Drawing.Point(304, 67);
             this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(75, 28);
+            this.btnSend.Size = new System.Drawing.Size(57, 28);
             this.btnSend.TabIndex = 6;
             this.btnSend.Text = "Send";
             this.btnSend.UseVisualStyleBackColor = true;
@@ -122,6 +145,7 @@
             this.txtAddress.Name = "txtAddress";
             this.txtAddress.Size = new System.Drawing.Size(99, 20);
             this.txtAddress.TabIndex = 0;
+            this.txtAddress.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // rtxtThreatReply
             // 
@@ -134,9 +158,9 @@
             // 
             // rtxtThreatCmd
             // 
-            this.rtxtThreatCmd.Location = new System.Drawing.Point(10, 19);
+            this.rtxtThreatCmd.Location = new System.Drawing.Point(10, 84);
             this.rtxtThreatCmd.Name = "rtxtThreatCmd";
-            this.rtxtThreatCmd.Size = new System.Drawing.Size(397, 173);
+            this.rtxtThreatCmd.Size = new System.Drawing.Size(397, 218);
             this.rtxtThreatCmd.TabIndex = 11;
             this.rtxtThreatCmd.Text = "";
             this.rtxtThreatCmd.WordWrap = false;
@@ -152,7 +176,7 @@
             // 
             // grpBoxXML
             // 
-            this.grpBoxXML.Controls.Add(this.txtFileName);
+            this.grpBoxXML.Controls.Add(this.txrPathName);
             this.grpBoxXML.Controls.Add(this.btnOpen);
             this.grpBoxXML.Location = new System.Drawing.Point(6, 46);
             this.grpBoxXML.Name = "grpBoxXML";
@@ -161,23 +185,83 @@
             this.grpBoxXML.TabStop = false;
             this.grpBoxXML.Text = "Lv3 Image File";
             // 
-            // txtFileName
+            // txrPathName
             // 
-            this.txtFileName.Location = new System.Drawing.Point(80, 22);
-            this.txtFileName.Name = "txtFileName";
-            this.txtFileName.ReadOnly = true;
-            this.txtFileName.Size = new System.Drawing.Size(195, 20);
-            this.txtFileName.TabIndex = 0;
+            this.txrPathName.Location = new System.Drawing.Point(80, 22);
+            this.txrPathName.Name = "txrPathName";
+            this.txrPathName.ReadOnly = true;
+            this.txrPathName.Size = new System.Drawing.Size(195, 20);
+            this.txrPathName.TabIndex = 0;
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.grpSpectrum);
+            this.groupBox4.Controls.Add(this.grpFileName);
+            this.groupBox4.Controls.Add(this.grpDirectory);
             this.groupBox4.Controls.Add(this.rtxtThreatCmd);
-            this.groupBox4.Location = new System.Drawing.Point(6, 120);
+            this.groupBox4.Location = new System.Drawing.Point(6, 202);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(413, 223);
+            this.groupBox4.Size = new System.Drawing.Size(413, 325);
             this.groupBox4.TabIndex = 13;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Send";
+            // 
+            // grpSpectrum
+            // 
+            this.grpSpectrum.Controls.Add(this.txtSpectrum);
+            this.grpSpectrum.Location = new System.Drawing.Point(19, 19);
+            this.grpSpectrum.Name = "grpSpectrum";
+            this.grpSpectrum.Size = new System.Drawing.Size(101, 46);
+            this.grpSpectrum.TabIndex = 14;
+            this.grpSpectrum.TabStop = false;
+            this.grpSpectrum.Text = "Lv3 Spectrum";
+            // 
+            // txtSpectrum
+            // 
+            this.txtSpectrum.Location = new System.Drawing.Point(16, 16);
+            this.txtSpectrum.Name = "txtSpectrum";
+            this.txtSpectrum.ReadOnly = true;
+            this.txtSpectrum.Size = new System.Drawing.Size(74, 20);
+            this.txtSpectrum.TabIndex = 0;
+            this.txtSpectrum.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // grpFileName
+            // 
+            this.grpFileName.Controls.Add(this.txtFileName);
+            this.grpFileName.Location = new System.Drawing.Point(293, 19);
+            this.grpFileName.Name = "grpFileName";
+            this.grpFileName.Size = new System.Drawing.Size(101, 46);
+            this.grpFileName.TabIndex = 13;
+            this.grpFileName.TabStop = false;
+            this.grpFileName.Text = "Lv3 File Name";
+            // 
+            // txtFileName
+            // 
+            this.txtFileName.Location = new System.Drawing.Point(15, 16);
+            this.txtFileName.Name = "txtFileName";
+            this.txtFileName.ReadOnly = true;
+            this.txtFileName.Size = new System.Drawing.Size(74, 20);
+            this.txtFileName.TabIndex = 0;
+            this.txtFileName.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // grpDirectory
+            // 
+            this.grpDirectory.Controls.Add(this.txtDirectory);
+            this.grpDirectory.Location = new System.Drawing.Point(156, 19);
+            this.grpDirectory.Name = "grpDirectory";
+            this.grpDirectory.Size = new System.Drawing.Size(101, 46);
+            this.grpDirectory.TabIndex = 12;
+            this.grpDirectory.TabStop = false;
+            this.grpDirectory.Text = "Lv3 Directory";
+            // 
+            // txtDirectory
+            // 
+            this.txtDirectory.Location = new System.Drawing.Point(6, 16);
+            this.txtDirectory.Name = "txtDirectory";
+            this.txtDirectory.ReadOnly = true;
+            this.txtDirectory.Size = new System.Drawing.Size(89, 20);
+            this.txtDirectory.TabIndex = 0;
+            this.txtDirectory.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // groupBox5
             // 
@@ -256,6 +340,7 @@
             this.txtPortListen.Name = "txtPortListen";
             this.txtPortListen.Size = new System.Drawing.Size(56, 20);
             this.txtPortListen.TabIndex = 0;
+            this.txtPortListen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // btnListen
             // 
@@ -305,6 +390,7 @@
             this.txtMulticast.Name = "txtMulticast";
             this.txtMulticast.Size = new System.Drawing.Size(99, 20);
             this.txtMulticast.TabIndex = 1;
+            this.txtMulticast.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // chkMulticast
             // 
@@ -329,10 +415,11 @@
             // 
             // txtTTL
             // 
-            this.txtTTL.Location = new System.Drawing.Point(10, 18);
+            this.txtTTL.Location = new System.Drawing.Point(10, 16);
             this.txtTTL.Name = "txtTTL";
             this.txtTTL.Size = new System.Drawing.Size(32, 20);
             this.txtTTL.TabIndex = 0;
+            this.txtTTL.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // groupBox3
             // 
@@ -350,12 +437,107 @@
             this.txtAdapter.Name = "txtAdapter";
             this.txtAdapter.Size = new System.Drawing.Size(99, 20);
             this.txtAdapter.TabIndex = 0;
+            this.txtAdapter.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // grpPlay
+            // 
+            this.grpPlay.Controls.Add(this.grpThreatCount);
+            this.grpPlay.Controls.Add(this.grpImageCount);
+            this.grpPlay.Controls.Add(this.btnStop);
+            this.grpPlay.Controls.Add(this.btnPlay);
+            this.grpPlay.Controls.Add(this.btnNext);
+            this.grpPlay.Location = new System.Drawing.Point(6, 120);
+            this.grpPlay.Name = "grpPlay";
+            this.grpPlay.Size = new System.Drawing.Size(413, 67);
+            this.grpPlay.TabIndex = 19;
+            this.grpPlay.TabStop = false;
+            this.grpPlay.Text = "Player Controls";
+            // 
+            // grpThreatCount
+            // 
+            this.grpThreatCount.Controls.Add(this.txtThreatCnt);
+            this.grpThreatCount.Location = new System.Drawing.Point(330, 12);
+            this.grpThreatCount.Name = "grpThreatCount";
+            this.grpThreatCount.Size = new System.Drawing.Size(71, 48);
+            this.grpThreatCount.TabIndex = 11;
+            this.grpThreatCount.TabStop = false;
+            this.grpThreatCount.Text = "Threat Cnt";
+            // 
+            // txtThreatCnt
+            // 
+            this.txtThreatCnt.Location = new System.Drawing.Point(10, 19);
+            this.txtThreatCnt.Name = "txtThreatCnt";
+            this.txtThreatCnt.ReadOnly = true;
+            this.txtThreatCnt.Size = new System.Drawing.Size(48, 20);
+            this.txtThreatCnt.TabIndex = 1;
+            this.txtThreatCnt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // grpImageCount
+            // 
+            this.grpImageCount.Controls.Add(this.txtImgCnt);
+            this.grpImageCount.Location = new System.Drawing.Point(253, 13);
+            this.grpImageCount.Name = "grpImageCount";
+            this.grpImageCount.Size = new System.Drawing.Size(71, 48);
+            this.grpImageCount.TabIndex = 10;
+            this.grpImageCount.TabStop = false;
+            this.grpImageCount.Text = "Image Cnt";
+            // 
+            // txtImgCnt
+            // 
+            this.txtImgCnt.Location = new System.Drawing.Point(10, 19);
+            this.txtImgCnt.Name = "txtImgCnt";
+            this.txtImgCnt.ReadOnly = true;
+            this.txtImgCnt.Size = new System.Drawing.Size(48, 20);
+            this.txtImgCnt.TabIndex = 1;
+            this.txtImgCnt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // btnStop
+            // 
+            this.btnStop.Location = new System.Drawing.Point(172, 24);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(75, 28);
+            this.btnStop.TabIndex = 9;
+            this.btnStop.Text = "Stop";
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
+            // btnPlay
+            // 
+            this.btnPlay.Location = new System.Drawing.Point(91, 24);
+            this.btnPlay.Name = "btnPlay";
+            this.btnPlay.Size = new System.Drawing.Size(75, 28);
+            this.btnPlay.TabIndex = 8;
+            this.btnPlay.Text = "Play";
+            this.btnPlay.UseVisualStyleBackColor = true;
+            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
+            // 
+            // btnNext
+            // 
+            this.btnNext.Location = new System.Drawing.Point(10, 24);
+            this.btnNext.Name = "btnNext";
+            this.btnNext.Size = new System.Drawing.Size(75, 28);
+            this.btnNext.TabIndex = 7;
+            this.btnNext.Text = "Next";
+            this.btnNext.UseVisualStyleBackColor = true;
+            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+            // 
+            // pbRunning
+            // 
+            this.pbRunning.Image = global::threat_test.Properties.Resources.running;
+            this.pbRunning.Location = new System.Drawing.Point(374, 54);
+            this.pbRunning.Name = "pbRunning";
+            this.pbRunning.Size = new System.Drawing.Size(66, 59);
+            this.pbRunning.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbRunning.TabIndex = 20;
+            this.pbRunning.TabStop = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(874, 545);
+            this.Controls.Add(this.pbRunning);
+            this.Controls.Add(this.grpPlay);
             this.Controls.Add(this.rtxtThreatReply);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.grpBoxTTL);
@@ -380,6 +562,12 @@
             this.grpBoxXML.ResumeLayout(false);
             this.grpBoxXML.PerformLayout();
             this.groupBox4.ResumeLayout(false);
+            this.grpSpectrum.ResumeLayout(false);
+            this.grpSpectrum.PerformLayout();
+            this.grpFileName.ResumeLayout(false);
+            this.grpFileName.PerformLayout();
+            this.grpDirectory.ResumeLayout(false);
+            this.grpDirectory.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupBox6.ResumeLayout(false);
@@ -390,6 +578,12 @@
             this.grpBoxTTL.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.grpPlay.ResumeLayout(false);
+            this.grpThreatCount.ResumeLayout(false);
+            this.grpThreatCount.PerformLayout();
+            this.grpImageCount.ResumeLayout(false);
+            this.grpImageCount.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRunning)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -406,7 +600,7 @@
         private System.Windows.Forms.RichTextBox rtxtThreatCmd;
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.GroupBox grpBoxXML;
-        private System.Windows.Forms.TextBox txtFileName;
+        private System.Windows.Forms.TextBox txrPathName;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.GroupBox groupBox6;
@@ -425,6 +619,21 @@
         private System.Windows.Forms.RadioButton rbParsed;
         private System.Windows.Forms.RadioButton rbGJParsed;
         private System.Windows.Forms.RadioButton rbGJRaw;
+        private System.Windows.Forms.GroupBox grpPlay;
+        private System.Windows.Forms.GroupBox grpImageCount;
+        private System.Windows.Forms.TextBox txtImgCnt;
+        private System.Windows.Forms.Button btnStop;
+        private System.Windows.Forms.Button btnPlay;
+        private System.Windows.Forms.Button btnNext;
+        private System.Windows.Forms.GroupBox grpFileName;
+        private System.Windows.Forms.TextBox txtFileName;
+        private System.Windows.Forms.GroupBox grpDirectory;
+        private System.Windows.Forms.TextBox txtDirectory;
+        private System.Windows.Forms.GroupBox grpSpectrum;
+        private System.Windows.Forms.TextBox txtSpectrum;
+        private System.Windows.Forms.GroupBox grpThreatCount;
+        private System.Windows.Forms.TextBox txtThreatCnt;
+        private System.Windows.Forms.PictureBox pbRunning;
     }
 }
 

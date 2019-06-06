@@ -364,7 +364,7 @@ namespace threat_test
             }
             else
             {
-                MessageBox.Show("Unable to listen");
+                MessageBox.Show("Unable to listen", "ERROR");
             }
         }
 
@@ -404,7 +404,7 @@ namespace threat_test
 
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "EXCEPTION");
+                MessageBox.Show("Error creating receiver: ", "ERROR");
                 return false;
             }
         }
@@ -700,11 +700,16 @@ namespace threat_test
             Next();
         }
 
-        private void Next()
+        private void Next(String newDir = "" )
         {
+            Boolean bEnd = false;
             receiveString = "";
             //Get a list of the filenames in the current directory
-            String srcDir = Path.GetDirectoryName(PathName);
+            String srcDir = "";
+            if (newDir.Length > 0)
+                srcDir = newDir;
+            else
+                srcDir = Path.GetDirectoryName(PathName);
             FileNames = Directory.EnumerateFiles(srcDir, "*.tif");
 
             //Find the current file (files are in alphabetical order)
@@ -714,20 +719,24 @@ namespace threat_test
             {
                 if (bParseErr)
                 {
-                    MessageBox.Show("Error parsing threat response - playing terminated");
+                    MessageBox.Show("Error parsing threat response - playing terminated", "ERROR");
                     EnableButtons(true);
                     pbRunning.Visible = false;
                     return;
                 }
 
-                if (!bPathNameFound)
+                else if (!bPathNameFound)
                 {
-                    //Skip past the current file
-                    if (pname == PathName)
+                    //Find and then skip past the current file
+                    if (pname == PathName || newDir.Length > 0)
+                    {
                         bPathNameFound = true;
+                        bEnd = true;
+                    }
                 }
                 else
                 {
+                    bEnd = false;
                     PathName = pname;
                     PopulateTxt();
                     rtxtThreatCmd.Text = CreateThreat();
@@ -750,12 +759,60 @@ namespace threat_test
                 }                 
             }
 
-            //we are now at the end of the current directory
-            if (bPlay)
+            if (bPlay || bEnd)
             {
-                MessageBox.Show("End of directory reached");
+                //we are now at the end of the current directory
+                String srcDirNext = GetNextDir(srcDir);
+                if (srcDirNext.Length > 0)
+                    Next(srcDirNext);
+                else
+                    MessageBox.Show("No more files to process", "INFO");
+
                 btnStop_Click(null, EventArgs.Empty);
             }
+        }
+
+        String GetNextDir(String srcDir)
+        {
+            //Get just the directory name
+            int pos = srcDir.LastIndexOf("\\");
+            String dirName = srcDir.Substring(pos + 1);
+            String dirRoot = srcDir.Substring(0, pos);
+            //Need to increment the directoy name and see if it exists
+            //Directory name format is YYYYMMDDHHmm
+            DateTime srcDirDT = new DateTime();
+            try
+            {
+                int year = int.Parse(dirName.Substring(0, 4));
+                int month = int.Parse(dirName.Substring(4, 2));
+                int day = int.Parse(dirName.Substring(6, 2));
+                int hour = int.Parse(dirName.Substring(8, 2));
+                int minute = int.Parse(dirName.Substring(10, 2));
+                srcDirDT = new DateTime(year, month, day, hour, minute, 0);
+            }
+            catch
+            {
+                MessageBox.Show("Directory format is incorrect (YYYYMMDDHHmm): " + dirName, "ERROR");
+                return "";
+            }
+
+            //Increment the directory by one minute
+            srcDirDT = srcDirDT.AddMinutes(1);
+
+            //Convert back to a string
+            StringBuilder sb = new StringBuilder();
+            sb.Append(String.Format("{0:0000}", srcDirDT.Year));
+            sb.Append(String.Format("{0:00}", srcDirDT.Month));
+            sb.Append(String.Format("{0:00}", srcDirDT.Day));
+            sb.Append(String.Format("{0:00}", srcDirDT.Hour));
+            sb.Append(String.Format("{0:00}", srcDirDT.Minute));
+            String srcDirNext = dirRoot + "\\" + sb.ToString();
+
+            //Check to see if the next directory exists
+            if (Directory.Exists(srcDirNext))
+                return srcDirNext;
+            else
+                return "";
         }
 
         void sleep(int msecs)

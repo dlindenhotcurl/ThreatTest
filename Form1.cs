@@ -404,7 +404,7 @@ namespace threat_test
 
             catch (Exception ex)
             {
-                MessageBox.Show("Error creating receiver: ", "ERROR");
+                MessageBox.Show("Error creating receiver: " + ex.Message , "ERROR");
                 return false;
             }
         }
@@ -651,17 +651,20 @@ namespace threat_test
             for (int i = 0; i < count; i++)
             {
                 rtxtThreatReply.AppendText("\nPolygon " + (i + 1));
+                String geometry = "";
+                String class_id="";
+                String score="";
                 try
                 {
                     coord_start = json.IndexOf("\"coordinates\":", feat);
                     int coord_end = json.IndexOf("]]]", coord_start) + 2;
-                    String geometry = json.Substring(coord_start, coord_end - coord_start + 1);
+                    geometry = json.Substring(coord_start, coord_end - coord_start + 1);
                     int prop_start = json.IndexOf("\"properties\":{", feat);
                     int prop_end = json.IndexOf("}", prop_start);
                     String properties = json.Substring(prop_start, prop_end - prop_start + 1);
-                    String class_id = PropParse(properties, "class_id");
+                    class_id = PropParse(properties, "class_id");               
                     String class_name = PropParse(properties, "class_name");
-                    String score = PropParse(properties, "score");
+                    score = PropParse(properties, "score");
                     feat = json.IndexOf("},{", feat + 3);
                     rtxtThreatReply.AppendText("\n\tclass_id: " + class_id);
                     rtxtThreatReply.AppendText("\n\tclass_name: " + class_name);
@@ -672,6 +675,29 @@ namespace threat_test
                 catch (Exception ex)
                 {
                     rtxtThreatReply.AppendText("\nERROR parsing polygon " + (i + 1) + ": " + ex.Message);
+                    bParseErr = true;
+                }
+
+                //Check the non-strings
+                int iTmp;
+                if (!int.TryParse(class_id, out iTmp))
+                {
+                    rtxtThreatReply.AppendText("\nERROR parsing class_id. Should be int - found: " + class_id);
+                    bParseErr = true;
+                }
+                double dTmp;
+                if (!double.TryParse(score, out dTmp))
+                {
+                    rtxtThreatReply.AppendText("\nERROR parsing score. Should be double - found: " + score);
+                    bParseErr = true;
+                }
+
+                //Check the geometry
+                string gErrmess = IsValidGeometry(geometry);
+                if (gErrmess.Length > 0)
+                {
+                    rtxtThreatReply.AppendText("\nERROR invalid geometry: " + gErrmess);
+                    bParseErr = true;
                 }
             }
         }
@@ -872,6 +898,77 @@ namespace threat_test
             bPlay = false;
             pbRunning.Visible = false;
             EnableButtons(true);
+        }
+
+
+        String IsValidGeometry(String geometry)
+
+        //Format should be [[x,y],[x,y],[x,y],[x,y],[x,y]] with x and y doubles
+        //We will also extra "[" at the very start if matched by extra "]" at the end
+        {
+            //FInd the coordinates
+            int colon = geometry.IndexOf(":");
+            String geom = geometry.Substring(colon + 1);
+            //Next check that the string starts with at least two "[" and ends with the same number of matching "]";
+            int braces_start = 0;
+            foreach (char c in geom)
+            {
+                if (c == '[')
+                    braces_start++;
+                else
+                    break;
+            }
+            int braces_end = 0;
+            foreach(char c in geom.Reverse())
+            {
+                if (c == ']')
+                    braces_end++;
+                else
+                    break;
+            }
+            if (braces_start < 2)
+                return "Geometry string must start with at least two '['";
+            else if (braces_start != braces_end)
+                return "Geometry string must start and end with the ame number of square braces";
+
+            double xStart = 0.0;
+            double yStart = 0.0;
+            double x = 0.0;
+            double y = 0.0;
+            int nCoords = 0;
+            Boolean bFirstCoordFnd = false;
+            try
+            {
+                int brace_left = braces_start - 1;
+                while (brace_left > -1)
+                {
+                    int comma = geom.IndexOf(",", brace_left + 1);
+                    int brace_right = geom.IndexOf("]", comma + 1);
+                    String strX = geom.Substring(brace_left + 1, comma - brace_left - 1);
+                    String strY = geom.Substring(comma + 1, brace_right - comma - 1);
+                    x = double.Parse(strX);
+                    y = double.Parse(strY);
+                    nCoords++;
+                    if (!bFirstCoordFnd)
+                    {
+                        xStart = x;
+                        yStart = y;
+                        bFirstCoordFnd = true;
+                    }
+                    brace_left = geom.IndexOf("[", brace_right + 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            if (nCoords < 4)
+                return "ERROR: Polygon must have at least three side";
+            if (xStart != x || yStart != y)
+                return "ERROR: Polygon does not close";
+
+            return "";
         }
     }
 }

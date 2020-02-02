@@ -41,6 +41,8 @@
             this.grpBoxXML = new System.Windows.Forms.GroupBox();
             this.txrPathName = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.grpUID = new System.Windows.Forms.GroupBox();
+            this.txtUID = new System.Windows.Forms.TextBox();
             this.grpSpectrum = new System.Windows.Forms.GroupBox();
             this.txtSpectrum = new System.Windows.Forms.TextBox();
             this.grpFileName = new System.Windows.Forms.GroupBox();
@@ -77,6 +79,7 @@
             this.groupBox1.SuspendLayout();
             this.grpBoxXML.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.grpUID.SuspendLayout();
             this.grpSpectrum.SuspendLayout();
             this.grpFileName.SuspendLayout();
             this.grpDirectory.SuspendLayout();
@@ -195,6 +198,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.grpUID);
             this.groupBox4.Controls.Add(this.grpSpectrum);
             this.groupBox4.Controls.Add(this.grpFileName);
             this.groupBox4.Controls.Add(this.grpDirectory);
@@ -206,10 +210,29 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Send";
             // 
+            // grpUID
+            // 
+            this.grpUID.Controls.Add(this.txtUID);
+            this.grpUID.Location = new System.Drawing.Point(336, 19);
+            this.grpUID.Name = "grpUID";
+            this.grpUID.Size = new System.Drawing.Size(71, 45);
+            this.grpUID.TabIndex = 15;
+            this.grpUID.TabStop = false;
+            this.grpUID.Text = "Initial UID";
+            // 
+            // txtUID
+            // 
+            this.txtUID.Location = new System.Drawing.Point(6, 15);
+            this.txtUID.Name = "txtUID";
+            this.txtUID.Size = new System.Drawing.Size(58, 20);
+            this.txtUID.TabIndex = 1;
+            this.txtUID.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtUID.TextChanged += new System.EventHandler(this.txtUID_TextChanged);
+            // 
             // grpSpectrum
             // 
             this.grpSpectrum.Controls.Add(this.txtSpectrum);
-            this.grpSpectrum.Location = new System.Drawing.Point(19, 19);
+            this.grpSpectrum.Location = new System.Drawing.Point(4, 19);
             this.grpSpectrum.Name = "grpSpectrum";
             this.grpSpectrum.Size = new System.Drawing.Size(101, 46);
             this.grpSpectrum.TabIndex = 14;
@@ -228,16 +251,16 @@
             // grpFileName
             // 
             this.grpFileName.Controls.Add(this.txtFileName);
-            this.grpFileName.Location = new System.Drawing.Point(293, 19);
+            this.grpFileName.Location = new System.Drawing.Point(218, 19);
             this.grpFileName.Name = "grpFileName";
-            this.grpFileName.Size = new System.Drawing.Size(101, 46);
+            this.grpFileName.Size = new System.Drawing.Size(93, 46);
             this.grpFileName.TabIndex = 13;
             this.grpFileName.TabStop = false;
             this.grpFileName.Text = "Lv3 File Name";
             // 
             // txtFileName
             // 
-            this.txtFileName.Location = new System.Drawing.Point(15, 16);
+            this.txtFileName.Location = new System.Drawing.Point(7, 16);
             this.txtFileName.Name = "txtFileName";
             this.txtFileName.ReadOnly = true;
             this.txtFileName.Size = new System.Drawing.Size(74, 20);
@@ -247,7 +270,7 @@
             // grpDirectory
             // 
             this.grpDirectory.Controls.Add(this.txtDirectory);
-            this.grpDirectory.Location = new System.Drawing.Point(156, 19);
+            this.grpDirectory.Location = new System.Drawing.Point(110, 19);
             this.grpDirectory.Name = "grpDirectory";
             this.grpDirectory.Size = new System.Drawing.Size(101, 46);
             this.grpDirectory.TabIndex = 12;
@@ -562,6 +585,8 @@
             this.grpBoxXML.ResumeLayout(false);
             this.grpBoxXML.PerformLayout();
             this.groupBox4.ResumeLayout(false);
+            this.grpUID.ResumeLayout(false);
+            this.grpUID.PerformLayout();
             this.grpSpectrum.ResumeLayout(false);
             this.grpSpectrum.PerformLayout();
             this.grpFileName.ResumeLayout(false);
@@ -634,6 +659,8 @@
         private System.Windows.Forms.GroupBox grpThreatCount;
         private System.Windows.Forms.TextBox txtThreatCnt;
         private System.Windows.Forms.PictureBox pbRunning;
+        private System.Windows.Forms.GroupBox grpUID;
+        private System.Windows.Forms.TextBox txtUID;
     }
 }
 

@@ -71,11 +71,12 @@ namespace threat_test
 
         private void btnSend_Click(object sender, EventArgs e)
         {
+            txtUID.Enabled = false;
             rbRaw.Checked = true;
-            ThreatUID++;
             rtxtThreatCmd.Text = CreateThreat();
             rtxtThreatReply.Clear();
             Send_Click();
+            ThreatUID++;
         }
 
         private void Send_Click()
@@ -119,6 +120,7 @@ namespace threat_test
             ModReg.Write("Multicast", chkMulticast.Checked ? "Y" : "N");
             ModReg.Write("MulticastAddress", txtMulticast.Text);
             ModReg.Write("TTL", txtTTL.Text);
+            ModReg.Write("UID", txtUID.Text);
         }
 
         private void GetSettings()
@@ -140,6 +142,14 @@ namespace threat_test
             {
                 rtxtThreatCmd.Text = CreateThreat();
                 PopulateTxt();
+            }
+            txtUID.Text = ModReg.Read("UID");
+            if (txtUID.Text == "")
+                txtUID.Text = "0";
+            if (!(int.TryParse(txtUID.Text, out ThreatUID)))
+            {
+                txtUID.Text = "0";
+                ThreatUID = 0;
             }
         }
 
@@ -271,7 +281,9 @@ namespace threat_test
                         MessageBox.Show("Requested network interface not found", "ERROR");
                         return false;
                     }
-                    udpClientSend.Client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastInterface, (int)IPAddress.HostToNetworkOrder(idx));
+                    udpClientSend.Client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastInterface,
+                                    (int)IPAddress.HostToNetworkOrder(idx));
+                    udpClientSend.Client.ExclusiveAddressUse = false;
                 }
 
                 byte[] b = Encoding.ASCII.GetBytes(rtxtThreatCmd.Text);
@@ -950,6 +962,16 @@ namespace threat_test
                 return "ERROR: Polygon does not close";
 
             return "";
+        }
+
+        private void txtUID_TextChanged(object sender, EventArgs e)
+        {
+            if (txtUID.Text == "")
+                txtUID.Text = "0";
+
+            int UID;
+            if (!(int.TryParse(txtUID.Text, out UID)))
+                txtUID.Text = "0";          
         }
     }
 }
